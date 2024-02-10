@@ -1,0 +1,46 @@
+# Salto retardado
+# Unidad de suma en punto flotante segmentada con latencia 2
+# Unidad de multiplicación en punto flotante segmentada con latencia 4
+# Unidad de división en punto flotante no segmentada con latencia 7
+
+
+
+.data
+n: .word 10
+a: .word 1, 2, 3, 4, 5, 4, 3, 2, 1, 10
+b: .word 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+c: .space 4
+
+.text
+.globl main
+
+main:
+  la $t0, n
+  lw $t0, 0($t0)
+  la $t1, a
+  la $t2, b
+  la $t3, c
+  lw $t5, 0($t1)
+  lw $t6, 0($t2)
+  addi $t4, $0, 0
+  slt $t7, $t5, $t6 
+
+loop:
+  beq $t7, $0, skip
+  addi $t1, $t1, 4
+  addi $t4, $t4, 1
+
+skip:
+  addi $t0, $t0, -1
+  lw $t5, 0($t1)
+  lw $t6, 0($t2)
+
+  slt $t7, $t5, $t6 
+  bne $t0, $0, loop
+  addi $t2, $t2, 4
+
+
+end:
+  sw $t4, 0($t3)
+  addi $v0, $0, 10
+  syscall
